@@ -1,23 +1,44 @@
 import React, { useState } from 'react';
 import '../App.css';
+import { SignUps } from './SignUps';
+
+
+const handleSubmit = (
+  day: string,
+  index: number,
+  value: string,
+  setSignUps: React.Dispatch<React.SetStateAction<SignUps>>
+) => {
+  setSignUps((prev) => {
+    const updatedDay = [...prev[day]];
+    updatedDay[index] = { ...updatedDay[index], name: value, submitted: true }; // Update the name and mark as submitted
+    return { ...prev, [day]: updatedDay };
+  });
+};
+
+const handleRemove = (day: string, index: number, setSignUps: React.Dispatch<React.SetStateAction<SignUps>>) => {
+  setSignUps((prev) => {
+    const updatedDay = [...prev[day]];
+    updatedDay.splice(index, 1);
+    return { ...prev, [day]: updatedDay };
+  });
+};
 
 export const NameEntry = ({
     day,
     originalIndex,
     name,
     submitted,
-    handleNameChange,
-    handleSubmit,
-    handleRemove,
+    setSignUps
   }: {
     day: string;
     originalIndex: number;
     name: string;
     submitted: boolean;
-    handleNameChange: (day: string, index: number, value: string) => void;
-    handleSubmit: (day: string, index: number) => void;
-    handleRemove: (day: string, index: number) => void;
+    setSignUps: React.Dispatch<React.SetStateAction<SignUps>>;
   }) => {
+    const [inputValue, setInputValue] = useState(name); // Local state for input value
+
     return (
       <div
         className={`entry`} >
@@ -25,21 +46,21 @@ export const NameEntry = ({
           <input
             type="text"
             placeholder="Enter your name"
-            value={name}
-            onChange={(e) => handleNameChange(day, originalIndex, e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             disabled={submitted}
           />
           {!submitted ? (
             <button
               className="submit-btn"
-              onClick={() => handleSubmit(day, originalIndex)}
-            >
+              onClick={() => handleSubmit(day, originalIndex, inputValue, setSignUps)} // Pass inputValue to handleSubmit
+              >
               ➕
             </button>
           ) : (
             <button
               className="remove-btn"
-              onClick={() => handleRemove(day, originalIndex)}
+              onClick={() => handleRemove(day, originalIndex, setSignUps)}
             >
               ❌
             </button>
