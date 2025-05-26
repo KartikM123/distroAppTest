@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
 import '../App.css';
 import { SignUps } from './SignUps';
+import { ref, set } from 'firebase/database';
+import { database } from './Config/FirebaseConfig'; // Adjust the import path as necessary
 
-
-const handleSubmit = (
+const handleSubmit = async (
   day: string,
   index: number,
   value: string,
   setSignUps: React.Dispatch<React.SetStateAction<SignUps>>
 ) => {
-  setSignUps((prev) => {
-    const updatedDay = [...prev[day]];
-    updatedDay[index] = { ...updatedDay[index], name: value, submitted: true }; // Update the name and mark as submitted
-    return { ...prev, [day]: updatedDay };
-  });
+  try {
+    // Write data to Firebase Realtime Database
+    await set(ref(database, `signUps/${day}/${index}`), {
+      name: value,
+      submitted: true,
+    });
+  } catch (error) {
+    console.error('Error submitting data to Firebase:', error);
+    alert('Failed to submit data. Please try again.');
+  }
+
+    // Update local state after successful database update
+    setSignUps((prev) => {
+      const updatedDay = [...prev[day]];
+      updatedDay[index] = { ...updatedDay[index], name: value, submitted: true };
+      return { ...prev, [day]: updatedDay };
+    });
 };
 
 const handleRemove = (day: string, index: number, setSignUps: React.Dispatch<React.SetStateAction<SignUps>>) => {

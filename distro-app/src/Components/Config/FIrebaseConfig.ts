@@ -3,13 +3,13 @@ import { getDatabase } from 'firebase/database'; // For Realtime Database
 import { getFirestore } from 'firebase/firestore'; // For Firestore
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-};
+    apiKey: "AIzaSyC2sBL_KjOB9HaDtgz6FoIuQtID4qAyijc",
+    authDomain: "distroapp-d4de7.firebaseapp.com",
+    projectId: "distroapp-d4de7",
+    storageBucket: "distroapp-d4de7.firebasestorage.app",
+    messagingSenderId: "980722805959",
+    appId: "1:980722805959:web:69a3b4e19edc6477bea2e2"
+  };
 
 const app = initializeApp(firebaseConfig);
 export const database = getDatabase(app); // Realtime Database
