@@ -1,79 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { useDrag, useDrop } from 'react-dnd';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-
-
-const DraggableEntry = ({
-  day,
-  originalIndex,
-  name,
-  submitted,
-  handleNameChange,
-  handleSubmit,
-  handleRemove,
-  handleDrop,
-}: {
-  day: string;
-  originalIndex: number;
-  name: string;
-  submitted: boolean;
-  handleNameChange: (day: string, index: number, value: string) => void;
-  handleSubmit: (day: string, index: number) => void;
-  handleRemove: (day: string, index: number) => void;
-  handleDrop: (fromDay: string, toDay: string, index: number) => void;
-}) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'ENTRY',
-    item: { fromDay: day, originalIndex },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
-
-  const [, drop] = useDrop(() => ({
-    accept: 'ENTRY',
-    drop: (item: { fromDay: string; originalIndex: number }) => {
-      handleDrop(item.fromDay, day, item.originalIndex);
-    },
-  }));
-
-  return (
-    <div
-      className={`entry ${isDragging ? 'dragging' : ''}`}
-      ref={(node) => {
-        if (node) {
-          drag(drop(node)); // Combine drag and drop refs
-        }
-      }}      >
-      <div className="entry-inline">
-        <input
-          type="text"
-          placeholder="Enter your name"
-          value={name}
-          onChange={(e) => handleNameChange(day, originalIndex, e.target.value)}
-          disabled={submitted}
-        />
-        {!submitted ? (
-          <button
-            className="submit-btn"
-            onClick={() => handleSubmit(day, originalIndex)}
-          >
-            ➕
-          </button>
-        ) : (
-          <button
-            className="remove-btn"
-            onClick={() => handleRemove(day, originalIndex)}
-          >
-            ❌
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { NameEntry } from './Components/NameEntry';
 
 export default function App() {
   const days = ['Monday', 'Tuesday', 'Wednesday']; // Example days
@@ -115,18 +42,7 @@ export default function App() {
     });
   };
 
-  const handleDrop = (fromDay: string, toDay: string, index: number) => {
-    setSignUps((prev) => {
-      const fromEntries = [...prev[fromDay]];
-      const toEntries = [...prev[toDay]];
-      const [movedEntry] = fromEntries.splice(index, 1);
-      toEntries.push(movedEntry);
-      return { ...prev, [fromDay]: fromEntries, [toDay]: toEntries };
-    });
-  };
-
   return (
-    <DndProvider backend={HTML5Backend}>
       <div className="App">
       <div className="days-container">
         {days.map((day) => (
@@ -141,7 +57,7 @@ export default function App() {
                   .map((entry, originalIndex) => ({ ...entry, originalIndex }))
                   .filter((entry) => entry.role === role.name)
                   .map(({ originalIndex, name, submitted }, index) => (
-                    <DraggableEntry
+                    <NameEntry
                       key={originalIndex} // Use a stable key
                       day={day}
                       originalIndex={originalIndex}
@@ -152,7 +68,6 @@ export default function App() {
                       } // Pass correct handler
                       handleSubmit={handleSubmit}
                       handleRemove={handleRemove}
-                      handleDrop={handleDrop}
                     />
                   ))}
                 {/* Add a + button to create a new entry */}
@@ -173,6 +88,5 @@ export default function App() {
         ))}
         </div>
       </div>
-    </DndProvider>
   );
 }
