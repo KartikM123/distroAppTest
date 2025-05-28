@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import '../App.css';
 import { SignUps } from './SignUps';
 import { ref, set } from 'firebase/database';
-import { database } from './Config/FirebaseConfig'; // Adjust the import path as necessary
-
+import { database } from './Config/F-baseConfig'; // Adjust the import path as necessary
+import { getFirestore, collection, doc, setDoc, addDoc } from "firebase/firestore";
 const handleSubmit = async (
   day: string,
   index: number,
   value: string,
   setSignUps: React.Dispatch<React.SetStateAction<SignUps>>
 ) => {
+
   try {
     // Write data to Firebase Realtime Database
-    await set(ref(database, `signUps/${day}/${index}`), {
+    set(ref(database, `signUps/${day}/${index}`), {
       name: value,
       submitted: true,
     });
